@@ -5,6 +5,7 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
@@ -25,10 +26,10 @@ public class CrimesController {
     private URL location;
 
     @FXML // fx:id="boxCategoria"
-    private ComboBox<?> boxCategoria; // Value injected by FXMLLoader
+    private ComboBox<String> boxCategoria; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnAnalisi"
     private Button btnAnalisi; // Value injected by FXMLLoader
@@ -45,7 +46,20 @@ public class CrimesController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Crea grafo...\n");
+    	String c= boxCategoria.getValue();
+    	if(c==null) {
+    		txtResult.appendText("seleziona una categoria per creare il grafo");
+    		return;
+    	}
+    	try{
+    		int a= boxAnno.getValue();
+    		String result=this.model.creaGrafo(c,a);
+    		txtResult.appendText(result+"\n");
+    	}catch(NumberFormatException ex) {
+    		txtResult.appendText("seleziona un anno per creare il grafo \n");
+    		return;
+    	}
+    	
     }
 
     @FXML
@@ -67,5 +81,8 @@ public class CrimesController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxCategoria.getItems().setAll(this.model.getCategorie());
+    	for(int i=2014;i<=2017;i++)
+    		boxAnno.getItems().add(i);
     }
 }
